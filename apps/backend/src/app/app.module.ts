@@ -3,11 +3,12 @@ import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { PrismaModule } from '../prisma/prisma.module';
 import { CourseModule } from '../course/course.module';
+import { StudentModule } from '../student/student.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [PrismaModule, CourseModule],
+  imports: [PrismaModule, CourseModule, StudentModule],
   controllers: [AppController],
   providers: [
     AppService,
