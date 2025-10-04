@@ -1,5 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
   "files": [],
   "include": [],
   "references": [
@@ -8,9 +12,10 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../../libs/shared"
     }
   ],
-  "compilerOptions": {
-    "esModuleInterop": true
-  }
+  "extends": "../../tsconfig.base.json"
 }
