@@ -1,0 +1,40 @@
+'use client';
+
+import type { Course } from '@edu-platform/shared';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+
+interface CourseListProps {
+  courses: Course[];
+  onDelete: (id: string) => Promise<void>;
+}
+
+export function CourseList({ courses, onDelete }: CourseListProps) {
+  return (
+    <div className="grid gap-4">
+      {courses.map((course) => (
+        <Card key={course.id} className="p-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="font-semibold text-lg">{course.title}</h3>
+              <p className="text-sm text-gray-600">{course.description}</p>
+              <p className="text-sm mt-2">
+                By {course.author} - ${course.price}
+              </p>
+              <span
+                className={`text-xs px-2 py-1 rounded ${
+                  course.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                {course.published ? 'Published' : 'Draft'}
+              </span>
+            </div>
+            <Button variant="destructive" onClick={() => onDelete(course.id)}>
+              Delete
+            </Button>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}

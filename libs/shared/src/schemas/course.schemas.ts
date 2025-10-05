@@ -5,7 +5,7 @@ export const createCourseSchema = z.object({
   description: z.string().min(10).max(2000),
   price: z.number().positive().min(0),
   author: z.string().min(2).max(100),
-  published: z.boolean().default(false),
+  published: z.boolean(),
 });
 
 export const updateCourseSchema = z.object({
