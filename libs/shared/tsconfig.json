@@ -8,7 +8,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "composite": true,
-    "declaration": true
+    "declaration": true,
+    "esModuleInterop": true
   },
   "files": [],
   "include": [],

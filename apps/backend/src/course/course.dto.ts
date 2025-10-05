@@ -3,4 +3,6 @@ import { createCourseSchema, updateCourseSchema, courseIdSchema } from '@edu-pla
 
 export class CreateCourseDto extends createZodDto(createCourseSchema) {}
 export class UpdateCourseDto extends createZodDto(updateCourseSchema) {}
-export class CourseIdDto extends createZodDto(courseIdSchema) {}
+export class CourseIdDto extends createZodDto(courseIdSchema) {
+  id!: string;
+}

@@ -8,13 +8,13 @@
   "include": [],
   "references": [
     {
+      "path": "../../libs/shared"
+    },
+    {
       "path": "./tsconfig.app.json"
     },
     {
       "path": "./tsconfig.spec.json"
-    },
-    {
-      "path": "../../libs/shared"
     }
   ],
   "extends": "../../tsconfig.base.json"
