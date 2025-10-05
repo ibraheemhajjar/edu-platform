@@ -52,7 +52,8 @@
     "webpack-node-externals": "^3.0.0"
   },
   "workspaces": [
-    "apps/*",
+    "apps/backend",
+    "apps/backend-e2e",
     "libs/*"
   ]
 }
