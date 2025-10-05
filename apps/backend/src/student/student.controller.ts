@@ -35,4 +35,9 @@ export class StudentController {
   enroll(@Body() enrollmentDto: EnrollmentDto) {
     return this.studentService.enroll(enrollmentDto.studentId, enrollmentDto.courseId);
   }
+
+  @Post('enroll-from-order')
+  async enrollFromOrder(@Body() body: { email: string; courseIds: string[] }) {
+    return this.studentService.enrollFromOrder(body.email, body.courseIds);
+  }
 }

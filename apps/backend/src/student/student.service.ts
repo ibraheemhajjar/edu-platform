@@ -37,4 +37,34 @@ export class StudentService {
       include: { course: true, student: true },
     });
   }
+
+  async enrollFromOrder(email: string, courseIds: string[]) {
+    // Find or create student
+    let student = await this.prisma.student.findUnique({
+      where: { email },
+    });
+
+    if (!student) {
+      student = await this.prisma.student.create({
+        data: {
+          name: email.split('@')[0],
+          email,
+        },
+      });
+    }
+
+    // Enroll in each course
+    const enrollments = await Promise.all(
+      courseIds.map((courseId) =>
+        this.prisma.enrollment.create({
+          data: {
+            studentId: student.id,
+            courseId,
+          },
+        }),
+      ),
+    );
+
+    return { success: true, student, enrollments };
+  }
 }
