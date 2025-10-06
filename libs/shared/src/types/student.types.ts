@@ -1,9 +1,12 @@
+import { Course } from './course.types';
+
 export interface Student {
   id: string;
   name: string;
   email: string;
   createdAt: Date;
   updatedAt: Date;
+  enrollments?: EnrollmentWithCourse[];
 }
 
 export interface CreateStudentInput {
@@ -21,4 +24,8 @@ export interface Enrollment {
   studentId: string;
   courseId: string;
   enrolledAt: Date;
+}
+
+export interface EnrollmentWithCourse extends Enrollment {
+  course: Course;
 }

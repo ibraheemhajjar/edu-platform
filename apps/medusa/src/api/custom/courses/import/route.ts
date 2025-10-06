@@ -1,13 +1,28 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import type { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
 import { createProductsWorkflow } from '@medusajs/medusa/core-flows';
+import { Course, ProductWithMetadata } from '@edu-platform/shared';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
-    const response = await fetch('http://localhost:3000/api/courses/sync');
-    const courses = await response.json();
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+    const response = await fetch(`${backendUrl}/api/courses/sync`);
+
+    const courses = (await response.json()) as Course[];
 
     const query = req.scope.resolve('query');
+
+    // Get default sales channel
+    const { data: salesChannels } = await query.graph({
+      entity: 'sales_channel',
+      fields: ['id', 'name'],
+    });
+
+    if (!salesChannels || salesChannels.length === 0) {
+      throw new Error('No sales channels available');
+    }
+
+    const salesChannelId = salesChannels[0].id as string;
 
     // Get all existing products
     const { data: allProducts } = await query.graph({
@@ -16,7 +31,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     });
 
     const existingCourseIds = new Set(
-      allProducts.filter((p: any) => p.metadata?.course_id).map((p: any) => p.metadata.course_id),
+      (allProducts as ProductWithMetadata[])
+        .filter((p) => p.metadata?.course_id)
+        .map((p) => p.metadata?.course_id)
+        .filter((id): id is string => id !== undefined),
     );
 
     let imported = 0;
@@ -35,6 +53,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
               title: course.title,
               description: course.description,
               status: course.published ? 'published' : 'draft',
+              sales_channels: [{ id: salesChannelId }],
               options: [
                 {
                   title: 'Type',
@@ -44,6 +63,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
               variants: [
                 {
                   title: 'Digital Course',
+                  manage_inventory: false,
                   options: { Type: 'Digital Course' },
                   prices: [
                     {
@@ -70,7 +90,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       skipped,
       message: `Imported ${imported} courses, skipped ${skipped} duplicates`,
     });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ success: false, error: err.message });
   }
 };

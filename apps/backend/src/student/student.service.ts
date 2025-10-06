@@ -38,19 +38,14 @@ export class StudentService {
     });
   }
 
-  async enrollFromOrder(email: string, courseIds: string[]) {
-    // Find or create student
-    let student = await this.prisma.student.findUnique({
-      where: { email },
+  async enrollFromOrder(studentId: string, courseIds: string[]) {
+    // Verify student exists
+    const student = await this.prisma.student.findUnique({
+      where: { id: studentId },
     });
 
     if (!student) {
-      student = await this.prisma.student.create({
-        data: {
-          name: email.split('@')[0],
-          email,
-        },
-      });
+      throw new Error(`Student with ID ${studentId} not found`);
     }
 
     // Enroll in each course

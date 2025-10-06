@@ -17,19 +17,15 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "checkJs": false,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "@edu-platform/shared": ["../../dist/libs/shared/src/index.js"]
+    }
   },
   "ts-node": {
     "swc": true
   },
-  "include": [
-    "**/*",
-    ".medusa/types/*"
-  ],
-  "exclude": [
-    "node_modules",
-    ".medusa/server",
-    ".medusa/admin",
-    ".cache"
-  ]
+  "include": ["**/*", ".medusa/types/*"],
+  "exclude": ["node_modules", ".medusa/server", ".medusa/admin", ".cache"]
 }

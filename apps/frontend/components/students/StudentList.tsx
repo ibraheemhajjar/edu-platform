@@ -6,10 +6,11 @@ import { Card } from '@/components/ui/card';
 
 interface StudentListProps {
   students: Student[];
+  onEdit: (student: Student) => void;
   onDelete: (id: string) => Promise<void>;
 }
 
-export function StudentList({ students, onDelete }: StudentListProps) {
+export function StudentList({ students, onEdit, onDelete }: StudentListProps) {
   return (
     <div className="grid gap-4">
       {students.map((student) => (
@@ -22,9 +23,14 @@ export function StudentList({ students, onDelete }: StudentListProps) {
                 Joined: {new Date(student.createdAt).toLocaleDateString()}
               </p>
             </div>
-            <Button variant="destructive" onClick={() => onDelete(student.id)}>
-              Delete
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => onEdit(student)}>
+                Edit
+              </Button>
+              <Button variant="destructive" onClick={() => onDelete(student.id)}>
+                Delete
+              </Button>
+            </div>
           </div>
         </Card>
       ))}

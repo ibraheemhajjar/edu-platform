@@ -1,4 +1,4 @@
-/* eslint-disable @nx/enforce-module-boundaries */
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {

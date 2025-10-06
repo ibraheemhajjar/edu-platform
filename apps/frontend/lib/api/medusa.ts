@@ -1,4 +1,4 @@
-const MEDUSA_URL = 'http://localhost:9000';
+const MEDUSA_URL = process.env.NEXT_PUBLIC_MEDUSA_URL || 'http://localhost:9000';
 
 export const medusaApi = {
   getProducts: async () => {

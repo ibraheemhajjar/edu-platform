@@ -6,6 +6,7 @@ export function Navigation() {
     { href: '/courses', label: 'Courses' },
     { href: '/students', label: 'Students' },
     { href: '/store', label: 'Store' },
+    { href: '/my-courses', label: 'My Courses' },
   ];
 
   return (

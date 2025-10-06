@@ -1,13 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CreateCourseInput } from '@edu-platform/shared';
+import type { Course, CreateCourseInput, UpdateCourseInput } from '@edu-platform/shared';
 import { coursesApi } from '@/lib/api/courses';
 import { CourseForm } from '@/components/courses/CourseForm';
 import { CourseList } from '@/components/courses/CourseList';
 
 export default function CoursesPage() {
   const queryClient = useQueryClient();
+  const [editingCourse, setEditingCourse] = useState<Course | undefined>(undefined);
 
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ['courses'],
@@ -21,6 +23,15 @@ export default function CoursesPage() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateCourseInput }) =>
+      coursesApi.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      setEditingCourse(undefined);
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: coursesApi.delete,
     onSuccess: () => {
@@ -28,8 +39,20 @@ export default function CoursesPage() {
     },
   });
 
-  const handleCreate = async (data: CreateCourseInput) => {
-    createMutation.mutate(data);
+  const handleSubmit = async (data: CreateCourseInput | UpdateCourseInput) => {
+    if (editingCourse) {
+      updateMutation.mutate({ id: editingCourse.id, data });
+    } else {
+      createMutation.mutate(data as CreateCourseInput);
+    }
+  };
+
+  const handleEdit = (course: Course) => {
+    setEditingCourse(course);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCourse(undefined);
   };
 
   const handleDelete = async (id: string) => {
@@ -41,9 +64,13 @@ export default function CoursesPage() {
   return (
     <div className="container mx-auto p-8">
       <h1 className="text-3xl font-bold mb-8">Course Management</h1>
-      <CourseForm onSubmit={handleCreate} />
+      <CourseForm
+        course={editingCourse}
+        onSubmit={handleSubmit}
+        onCancel={editingCourse ? handleCancelEdit : undefined}
+      />
       <div className="mt-8">
-        <CourseList courses={courses} onDelete={handleDelete} />
+        <CourseList courses={courses} onEdit={handleEdit} onDelete={handleDelete} />
       </div>
     </div>
   );

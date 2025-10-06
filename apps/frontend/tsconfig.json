@@ -1,5 +1,7 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -19,7 +21,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@edu-platform/shared": ["../../libs/shared/src/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

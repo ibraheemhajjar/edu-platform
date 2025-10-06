@@ -2,25 +2,36 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createCourseSchema, type CreateCourseInput } from '@edu-platform/shared';
+import {
+  createCourseSchema,
+  updateCourseSchema,
+  type CreateCourseInput,
+  type UpdateCourseInput,
+  type Course,
+} from '@edu-platform/shared';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useEffect } from 'react';
 
 interface CourseFormProps {
-  onSubmit: (data: CreateCourseInput) => Promise<void>;
+  course?: Course;
+  onSubmit: (data: CreateCourseInput | UpdateCourseInput) => Promise<void>;
+  onCancel?: () => void;
 }
 
-export function CourseForm({ onSubmit }: CourseFormProps) {
+export function CourseForm({ course, onSubmit, onCancel }: CourseFormProps) {
+  const isEditing = !!course;
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateCourseInput>({
-    resolver: zodResolver(createCourseSchema),
-    defaultValues: {
+  } = useForm<CreateCourseInput | UpdateCourseInput>({
+    resolver: zodResolver(isEditing ? updateCourseSchema : createCourseSchema),
+    defaultValues: course || {
       title: '',
       description: '',
       price: 0,
@@ -29,14 +40,30 @@ export function CourseForm({ onSubmit }: CourseFormProps) {
     },
   });
 
-  const onFormSubmit = async (data: CreateCourseInput) => {
+  useEffect(() => {
+    if (course) {
+      reset(course);
+    } else {
+      reset({
+        title: '',
+        description: '',
+        price: 0,
+        author: '',
+        published: true,
+      });
+    }
+  }, [course, reset]);
+
+  const onFormSubmit = async (data: CreateCourseInput | UpdateCourseInput) => {
     await onSubmit(data);
-    reset();
+    if (!isEditing) {
+      reset();
+    }
   };
 
   return (
     <Card className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Create Course</h2>
+      <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit Course' : 'Create Course'}</h2>
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
         <div>
           <Label>Title</Label>
@@ -65,7 +92,14 @@ export function CourseForm({ onSubmit }: CourseFormProps) {
           <Label htmlFor="published">Published</Label>
         </div>
 
-        <Button type="submit">Create Course</Button>
+        <div className="flex gap-2">
+          <Button type="submit">{isEditing ? 'Update Course' : 'Create Course'}</Button>
+          {isEditing && onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
     </Card>
   );
